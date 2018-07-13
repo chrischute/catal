@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision.models as models
 
 from args import TrainArgParser
-from data_loader import FakeDataLoader
+from data_loader import WhiteboardLoader
 from evaluator import ModelEvaluator
 from logger import TrainLogger
 from saver import ModelSaver
@@ -30,11 +30,11 @@ def train(args):
 
     # Get logger, evaluator, saver
     loss_fn = nn.CrossEntropyLoss()
-    train_loader = FakeDataLoader(10000, args.num_classes, 'train', args.batch_size,
-                                  shuffle=True, do_augment=True, num_workers=args.num_workers)
+    train_loader = WhiteboardLoader(args.data_dir, 'train', args.batch_size,
+                                    shuffle=True, do_augment=True, num_workers=args.num_workers)
     logger = TrainLogger(args, len(train_loader.dataset))
-    eval_loaders = [FakeDataLoader(1000, args.num_classes, 'val', args.batch_size,
-                                   shuffle=False, do_augment=False, num_workers=args.num_workers)]
+    eval_loaders = [WhiteboardLoader(args.data_dir, 'val', args.batch_size,
+                                     shuffle=False, do_augment=False, num_workers=args.num_workers)]
     evaluator = ModelEvaluator(eval_loaders, logger, args.max_eval, args.epochs_per_eval)
     saver = ModelSaver(**vars(args))
 
