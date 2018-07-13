@@ -18,6 +18,8 @@ def train(args):
     else:
         model_fn = models.__dict__[args.model]
         model = model_fn(pretrained=args.pretrained)
+        if args.pretrained:
+            model.fc = nn.Linear(model.fc.in_features, args.num_classes)
         model = nn.DataParallel(model, args.gpu_ids)
     model = model.to(args.device)
     model.train()
