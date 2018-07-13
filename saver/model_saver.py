@@ -1,4 +1,4 @@
-import models
+import torchvision.models as models
 import os
 import shutil
 import torch
@@ -52,7 +52,6 @@ class ModelSaver(object):
         ckpt_dict = {
             'ckpt_info': {'epoch': epoch, self.metric_name: metric_val},
             'model_name': model.module.__class__.__name__,
-            'model_args': model.module.args_dict(),
             'model_state': model.to('cpu').state_dict(),
             'optimizer': optimizer.state_dict(),
             'lr_scheduler': lr_scheduler.state_dict()
@@ -89,8 +88,7 @@ class ModelSaver(object):
 
         # Build model, load parameters
         model_fn = models.__dict__[ckpt_dict['model_name']]
-        model_args = ckpt_dict['model_args']
-        model = model_fn(**model_args)
+        model = model_fn(pretrained=False)
         model = nn.DataParallel(model, gpu_ids)
         model.load_state_dict(ckpt_dict['model_state'])
 
