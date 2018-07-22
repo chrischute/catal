@@ -15,8 +15,7 @@ class WhiteboardLoader(data.DataLoader):
         else:
             transforms_list = [transforms.Resize(256), transforms.CenterCrop(224)]
         transforms_list += [transforms.ToTensor(),
-                            # TODO: Find mean and std dev. of training set
-                            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])]
+                            transforms.Normalize(mean=[0.520, 0.443, 0.374], std=[0.136, 0.135, 0.134])]
 
         dataset = torchvision.datasets.ImageFolder(self.data_dir, transforms.Compose(transforms_list))
         super(WhiteboardLoader, self).__init__(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)

@@ -1,5 +1,6 @@
 .DS_Store
 .idea/
-logs/
 ckpts/
+data/
+logs/
 __pycache__/

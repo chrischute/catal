@@ -35,7 +35,7 @@ class TrainArgParser(BaseArgParser):
                                  help='LR scheduler to use.')
         self.parser.add_argument('--lr_decay_gamma', type=float, default=0.1,
                                  help='Multiply learning rate by this value every LR step (step and multi_step only).')
-        self.parser.add_argument('--lr_decay_step', type=int, default=100,
+        self.parser.add_argument('--lr_decay_step', type=int, default=7,
                                  help='Number of epochs between each multiply-by-gamma step.')
         self.parser.add_argument('--lr_milestones', type=str, default='50,125,250',
                                  help='Epochs to step the LR when using multi_step LR scheduler.')
