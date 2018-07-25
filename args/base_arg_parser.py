@@ -29,6 +29,7 @@ class BaseArgParser(object):
                                  help='Comma-separated 2D shape for images after cropping (crop comes after resize).')
         self.parser.add_argument('--num_channels', default=3, type=int, help='Number of channels in the input.')
         self.parser.add_argument('--num_classes', default=2, type=int, help='Number of classes to predict.')
+        self.parser.add_argument('--num_visuals', default=8, type=int, help='Number of visuals during training.')
         self.parser.add_argument('--num_workers', default=8, type=int, help='Number of threads for the DataLoader.')
         self.parser.add_argument('--save_dir', type=str, default='ckpts/',
                                  help='Directory in which to save model checkpoints.')

@@ -1,5 +1,8 @@
 import os
+import torch.nn.functional as F
+import util
 
+from constants import CATAL_MEAN, CATAL_STD
 from datetime import datetime
 from tensorboardX import SummaryWriter
 
@@ -15,6 +18,7 @@ class BaseLogger(object):
         self.batch_size = args.batch_size
         self.dataset_len = dataset_len
         self.device = args.device
+        self.num_visuals = args.num_visuals
         self.save_dir = args.save_dir if args.is_training else args.results_dir
         self.log_path = os.path.join(self.save_dir, '{}.log'.format(args.name))
         log_dir = os.path.join('logs', args.name + '_' + datetime.now().strftime('%b%d_%H%M'))
@@ -27,6 +31,7 @@ class BaseLogger(object):
         self.global_step = round_down((self.epoch - 1) * dataset_len, args.batch_size)
         self.iter_start_time = None
         self.epoch_start_time = None
+        self.un_normalize = util.UnNormalize(CATAL_MEAN, CATAL_STD)
 
     def _log_scalars(self, scalar_dict, print_to_stdout=True):
         """Log all values in a dict as scalars to TensorBoard."""
@@ -42,6 +47,35 @@ class BaseLogger(object):
             log_file.write(message + '\n')
         if print_to_stdout:
             print(message)
+
+    def visualize(self, inputs, logits, targets, phase):
+        num_visualized = 0
+
+        probs = F.sigmoid(logits.detach().to('cpu')).numpy()
+        if targets is not None:
+            targets = targets.numpy()
+
+        for i in range(self.num_visuals):
+            if i >= inputs.shape[0]:
+                break
+
+            # Get input, output, and label
+            input_np = self.un_normalize(inputs[i])
+            if targets is None:
+                label = 'no_label'
+            elif targets[i].any():
+                label = 'positive'
+            else:
+                label = 'negative'
+            prob_np = probs[i]
+
+            # Log to tensorboard
+            tag = '{}/{}/{}'.format(phase, label, prob_np)
+            self.summary_writer.add_image(tag, input_np, self.global_step)
+
+            num_visualized += 1
+
+        return num_visualized
 
     def start_iter(self):
         """Log info for start of an iteration."""

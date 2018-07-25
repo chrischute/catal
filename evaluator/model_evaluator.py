@@ -1,3 +1,4 @@
+import random
 import torch
 import torch.nn as nn
 
@@ -7,7 +8,7 @@ from tqdm import tqdm
 
 class ModelEvaluator(object):
     """Class for evaluating a model during training."""
-    def __init__(self, data_loaders, logger,  max_eval=None, epochs_per_eval=1):
+    def __init__(self, data_loaders, logger, num_visuals=8, max_eval=None, epochs_per_eval=1):
         """
         Args:
             data_loaders: List of Torch `DataLoader`s to sample from.
@@ -17,10 +18,11 @@ class ModelEvaluator(object):
             epochs_per_eval: Number of epochs between each evaluation.
         """
         self.data_loaders = data_loaders
-        self.epochs_per_eval = epochs_per_eval
         self.logger = logger
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.num_visuals = num_visuals
         self.max_eval = None if max_eval is None or max_eval < 0 else max_eval
+        self.epochs_per_eval = epochs_per_eval
+        self.loss_fn = nn.CrossEntropyLoss()
 
     def evaluate(self, model, device, epoch=None):
         """Evaluate a model at the end of the given epoch.
@@ -70,7 +72,8 @@ class ModelEvaluator(object):
 
         # Sample from the data loader and record model outputs
         loss_fn = nn.CrossEntropyLoss()
-        num_evaluated = 0
+        num_evaluated = num_visualized = 0
+        start_visual = random.randint(0, max(1, num_examples - self.num_visuals))
         with tqdm(total=num_examples, unit=' ' + phase) as progress_bar:
             for inputs, targets in data_loader:
                 if num_evaluated >= num_examples:
@@ -81,6 +84,9 @@ class ModelEvaluator(object):
                     loss = loss_fn(logits, targets.to(device))
 
                 self._record_batch(logits, loss, **records)
+
+                if start_visual <= num_evaluated and num_visualized < self.num_visuals and phase != 'train':
+                    num_visualized += self.logger.visualize(inputs, logits, targets, phase=phase)
 
                 progress_bar.update(min(inputs.size(0), num_examples - num_evaluated))
                 num_evaluated += inputs.size(0)
