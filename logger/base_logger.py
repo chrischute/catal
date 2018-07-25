@@ -70,7 +70,7 @@ class BaseLogger(object):
             prob_np = probs[i]
 
             # Log to tensorboard
-            tag = '{}/{}/{}'.format(phase, label, prob_np)
+            tag = '{}/{}/prob_{:.4f}'.format(phase, label, prob_np[1])  # prob_np[1] is P(positive_class) for binary
             self.summary_writer.add_image(tag, input_np, self.global_step)
 
             num_visualized += 1

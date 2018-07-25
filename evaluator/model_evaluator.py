@@ -1,6 +1,9 @@
+import numpy as np
 import random
+import sklearn.metrics as sk_metrics
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from evaluator.average_meter import AverageMeter
 from tqdm import tqdm
@@ -64,7 +67,7 @@ class ModelEvaluator(object):
         """
 
         # Keep track of task-specific records needed for computing overall metrics
-        records = {'loss_meter': AverageMeter()}
+        records = {'loss_meter': AverageMeter(), 'probs': [], 'labels': []}
 
         num_examples = len(data_loader.dataset)
         if self.max_eval is not None:
@@ -83,7 +86,7 @@ class ModelEvaluator(object):
                     logits = model.forward(inputs.to(device))
                     loss = loss_fn(logits, targets.to(device))
 
-                self._record_batch(logits, loss, **records)
+                self._record_batch(logits, targets, loss, **records)
 
                 if start_visual <= num_evaluated and num_visualized < self.num_visuals and phase != 'train':
                     num_visualized += self.logger.visualize(inputs, logits, targets, phase=phase)
@@ -97,27 +100,49 @@ class ModelEvaluator(object):
         return metrics
 
     @staticmethod
-    def _record_batch(logits, loss, loss_meter=None):
+    def _record_batch(logits, targets, loss, loss_meter=None, probs=None, labels=None):
         """Record results from a batch to keep track of metrics during evaluation.
 
         Args:
             logits: Batch of logits output by the model.
             loss_meter: AverageMeter keeping track of average loss during evaluation.
         """
+        with torch.no_grad():
+            batch_probs = F.sigmoid(logits)
+        probs.append(batch_probs)
+
+        # Note: `targets` is assumed to hold the keys for these examples
+        labels.append(targets)
+
         if loss_meter is not None:
             loss_meter.update(loss.item(), logits.size(0))
 
     @staticmethod
-    def _get_summary_dict(phase, loss_meter=None):
+    def _get_summary_dict(phase, loss_meter=None, probs=None, labels=None):
         """Get summary dictionaries given dictionary of records kept during evaluation.
 
         Args:
             phase: Phase being evaluated. One of 'train', 'val', or 'test'.
             loss_meter: AverageMeter keeping track of average loss during evaluation.
+            probs: List of probabilities.
+            labels: List of labels, parallel to probs.
 
         Returns:
             metrics: Dictionary of metrics for the current model.
         """
         metrics = {phase + '_' + 'loss': loss_meter.avg}
+
+        if probs is not None:
+            # Convert to flat numpy array
+            probs = np.concatenate(probs).ravel()
+            preds = (probs > 0.5)
+            labels = np.concatenate(labels).ravel()
+
+            # Update summary dicts
+            metrics.update({
+                phase + '_' + 'accuracy': sk_metrics.accuracy_score(labels, preds),
+                phase + '_' + 'precision': sk_metrics.precision_score(labels, preds),
+                phase + '_' + 'recall': sk_metrics.recall_score(labels, preds)
+            })
 
         return metrics
