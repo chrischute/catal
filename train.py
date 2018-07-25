@@ -37,7 +37,7 @@ def train(args):
     logger = TrainLogger(args, len(train_loader.dataset))
     eval_loaders = [WhiteboardLoader(args.data_dir, 'val', args.batch_size,
                                      shuffle=False, do_augment=False, num_workers=args.num_workers)]
-    evaluator = ModelEvaluator(eval_loaders, logger, args.max_eval, args.epochs_per_eval)
+    evaluator = ModelEvaluator(eval_loaders, logger, args.epochs_per_eval, args.max_eval, args.num_visuals)
     saver = ModelSaver(**vars(args))
 
     # Train model
