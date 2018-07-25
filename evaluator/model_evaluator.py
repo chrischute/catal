@@ -8,20 +8,20 @@ from tqdm import tqdm
 
 class ModelEvaluator(object):
     """Class for evaluating a model during training."""
-    def __init__(self, data_loaders, logger, num_visuals=8, max_eval=None, epochs_per_eval=1):
+    def __init__(self, data_loaders, logger, epochs_per_eval=1, max_eval=None, num_visuals=8):
         """
         Args:
             data_loaders: List of Torch `DataLoader`s to sample from.
             logger: Logger for plotting to console and TensorBoard.
-            num_visuals: Number of visuals to display from the validation set.
-            max_eval: Maximum number of examples to evaluate at each evaluation.
             epochs_per_eval: Number of epochs between each evaluation.
+            max_eval: Maximum number of examples to evaluate at each evaluation.
+            num_visuals: Number of visuals to display from the validation set.
         """
         self.data_loaders = data_loaders
         self.logger = logger
-        self.num_visuals = num_visuals
-        self.max_eval = None if max_eval is None or max_eval < 0 else max_eval
         self.epochs_per_eval = epochs_per_eval
+        self.max_eval = None if max_eval is None or max_eval < 0 else max_eval
+        self.num_visuals = num_visuals
         self.loss_fn = nn.CrossEntropyLoss()
 
     def evaluate(self, model, device, epoch=None):
