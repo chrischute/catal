@@ -109,7 +109,7 @@ class ModelEvaluator(object):
         """
         with torch.no_grad():
             batch_probs = F.sigmoid(logits)
-        probs.append(batch_probs)
+        probs.append(np.array([p[1] for p in batch_probs]))
 
         # Note: `targets` is assumed to hold the keys for these examples
         labels.append(targets)
