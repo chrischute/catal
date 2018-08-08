@@ -1,9 +1,9 @@
 import os
 import torch.utils.data as data
-import torchvision
 import torchvision.transforms as transforms
 
 from constants import CATAL_MEAN, CATAL_STD
+from data_loader.image_folder_with_paths import ImageFolderWithPaths
 
 
 class WhiteboardLoader(data.DataLoader):
@@ -22,5 +22,5 @@ class WhiteboardLoader(data.DataLoader):
         transforms_list += [transforms.ToTensor(),
                             transforms.Normalize(mean=CATAL_MEAN, std=CATAL_STD)]
 
-        dataset = torchvision.datasets.ImageFolder(self.data_dir, transforms.Compose(transforms_list))
+        dataset = ImageFolderWithPaths(self.data_dir, transforms.Compose(transforms_list))
         super(WhiteboardLoader, self).__init__(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)

@@ -14,7 +14,6 @@ class TrainLogger(BaseLogger):
         self.iters_until_print = args.iters_per_print
 
         self.iters_per_visual = args.iters_per_visual
-        self.iters_until_visual = args.iters_per_visual
 
         self.experiment_name = args.name
         self.max_eval = args.max_eval
@@ -25,7 +24,7 @@ class TrainLogger(BaseLogger):
         """Log info for start of an iteration."""
         self.iter_start_time = time()
 
-    def log_iter(self, loss):
+    def log_iter(self, inputs, logits, targets, paths, loss):
         """Log results from a training iteration."""
         loss = loss.item()
         self.loss_meter.update(loss, self.batch_size)
@@ -43,6 +42,10 @@ class TrainLogger(BaseLogger):
             self.loss_meter.reset()
 
             self.write(message)
+
+        # Periodically visualize up to num_visuals training examples from the batch
+        if self.iter % self.iters_per_visual == 0:
+            self.visualize(inputs, logits, targets, paths, phase='train')
 
     def end_iter(self):
         """Log info for end of an iteration."""

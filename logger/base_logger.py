@@ -48,12 +48,13 @@ class BaseLogger(object):
         if print_to_stdout:
             print(message)
 
-    def visualize(self, inputs, logits, targets, phase):
+    def visualize(self, inputs, logits, targets, paths, phase):
         num_visualized = 0
 
+        inputs = inputs.detach().to('cpu').numpy()
         probs = F.sigmoid(logits.detach().to('cpu')).numpy()
         if targets is not None:
-            targets = targets.numpy()
+            targets = targets.detach().to('cpu').numpy()
 
         for i in range(self.num_visuals):
             if i >= inputs.shape[0]:
@@ -70,7 +71,7 @@ class BaseLogger(object):
             prob_np = probs[i]
 
             # Log to tensorboard
-            tag = '{}/{}/prob_{:.4f}'.format(phase, label, prob_np[1])  # prob_np[1] is P(positive_class) for binary
+            tag = '{}/{}/prob_{:.4f}/{}'.format(phase, label, prob_np[1], paths[i])
             self.summary_writer.add_image(tag, input_np, self.global_step)
 
             num_visualized += 1

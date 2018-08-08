@@ -80,7 +80,7 @@ class ModelEvaluator(object):
         num_evaluated = num_visualized = 0
         start_visual = random.randint(0, max(1, num_examples - self.num_visuals))
         with tqdm(total=num_examples, unit=' ' + phase) as progress_bar:
-            for inputs, targets in data_loader:
+            for inputs, targets, paths in data_loader:
                 if num_evaluated >= num_examples:
                     break
 
@@ -91,7 +91,7 @@ class ModelEvaluator(object):
                 self._record_batch(logits, targets, loss, **records)
 
                 if start_visual <= num_evaluated and num_visualized < self.num_visuals and phase != 'train':
-                    num_visualized += self.logger.visualize(inputs, logits, targets, phase=phase)
+                    num_visualized += self.logger.visualize(inputs, logits, targets, paths, phase=phase)
 
                 progress_bar.update(min(inputs.size(0), num_examples - num_evaluated))
                 num_evaluated += inputs.size(0)

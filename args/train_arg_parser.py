@@ -26,7 +26,8 @@ class TrainArgParser(BaseArgParser):
                                  help='Number of recent ckpts to keep before overwriting old ones.')
         self.parser.add_argument('--max_eval', type=int, default=-1,
                                  help='Max number of examples to evaluate from the training set.')
-        self.parser.add_argument('--metric_name', type=str, default='val_AUROC', choices=('val_loss', 'val_AUROC'),
+        self.parser.add_argument('--metric_name', type=str, default='test_AUROC',
+                                 choices=('val_loss', 'val_AUROC', 'test_AUPRC', 'test_AUROC'),
                                  help='Metric used to determine which checkpoint is best.')
 
         # Optimizer args

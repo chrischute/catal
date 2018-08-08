@@ -45,14 +45,14 @@ def train(args):
     while not logger.is_finished_training():
         logger.start_epoch()
 
-        for inputs, targets in train_loader:
+        for inputs, targets, paths in train_loader:
             logger.start_iter()
             
             with torch.set_grad_enabled(True):
                 logits = model.forward(inputs.to(args.device))
                 loss = loss_fn(logits, targets.to(args.device))
 
-                logger.log_iter(loss)
+                logger.log_iter(inputs, logits, targets, paths, loss)
 
                 optimizer.zero_grad()
                 loss.backward()
