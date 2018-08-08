@@ -43,6 +43,7 @@ def main(args):
             file_name = '{}.jpg'.format(example.photo_num)
             dst_path = os.path.join(args.output_dir, subdir_name, file_name)
             urllib.request.urlretrieve(example.url, dst_path)
+            down_sample_image(dst_path, dst_path)
         except Exception:
             print('Error downloading from {}'.format(example.url))
 
