@@ -24,24 +24,24 @@ class TrainArgParser(BaseArgParser):
                                  help='Number of recent ckpts to keep before overwriting old ones.')
         self.parser.add_argument('--max_eval', type=int, default=-1,
                                  help='Max number of examples to evaluate from the training set.')
-        self.parser.add_argument('--metric_name', type=str, default='val_loss', choices=('val_loss', 'val_AUROC'),
+        self.parser.add_argument('--metric_name', type=str, default='val_AUROC', choices=('val_loss', 'val_AUROC'),
                                  help='Metric used to determine which checkpoint is best.')
 
         # Optimizer args
         self.parser.add_argument('--adam_beta_1', type=float, default=0.9, help='Adam beta 1 (Adam only).')
         self.parser.add_argument('--adam_beta_2', type=float, default=0.999, help='Adam beta 2 (Adam only).')
-        self.parser.add_argument('--lr', type=float, default=1e-3, help='Initial learning rate.')
+        self.parser.add_argument('--lr', type=float, default=1e-2, help='Initial learning rate.')
         self.parser.add_argument('--lr_scheduler', type=str, default='step', choices=('step', 'multi_step', 'plateau'),
                                  help='LR scheduler to use.')
         self.parser.add_argument('--lr_decay_gamma', type=float, default=0.1,
                                  help='Multiply learning rate by this value every LR step (step and multi_step only).')
-        self.parser.add_argument('--lr_decay_step', type=int, default=7,
+        self.parser.add_argument('--lr_decay_step', type=int, default=30,
                                  help='Number of epochs between each multiply-by-gamma step.')
         self.parser.add_argument('--lr_milestones', type=str, default='50,125,250',
                                  help='Epochs to step the LR when using multi_step LR scheduler.')
         self.parser.add_argument('--lr_patience', type=int, default=10,
                                  help='Number of stagnant epochs before stepping LR.')
-        self.parser.add_argument('--optimizer', type=str, default='sgd', choices=('sgd', 'adam'), help='Optimizer.')
+        self.parser.add_argument('--optimizer', type=str, default='adam', choices=('sgd', 'adam'), help='Optimizer.')
         self.parser.add_argument('--sgd_momentum', type=float, default=0.9, help='SGD momentum (SGD only).')
         self.parser.add_argument('--weight_decay', type=float, default=1e-4,
                                  help='Weight decay (i.e., L2 regularization factor).')
