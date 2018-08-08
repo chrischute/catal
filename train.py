@@ -58,6 +58,7 @@ def train(args):
                 loss.backward()
                 optimizer.step()
 
+            optim.step_scheduler(lr_scheduler, global_step=logger.global_step)
             logger.end_iter()
 
         metrics = evaluator.evaluate(model, args.device, logger.epoch)

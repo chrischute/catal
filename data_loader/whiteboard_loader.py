@@ -12,7 +12,11 @@ class WhiteboardLoader(data.DataLoader):
         self.data_dir = os.path.join(data_dir, phase)
         self.phase = phase
         if do_augment:
-            transforms_list = [transforms.RandomResizedCrop(224), transforms.RandomHorizontalFlip()]
+            transforms_list = [transforms.RandomResizedCrop(224),
+                               transforms.RandomHorizontalFlip(),
+                               transforms.RandomVerticalFlip(),
+                               transforms.RandomAffine(20),
+                               transforms.RandomRotation(20)]
         else:
             transforms_list = [transforms.Resize(256), transforms.CenterCrop(224)]
         transforms_list += [transforms.ToTensor(),
