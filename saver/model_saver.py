@@ -53,6 +53,7 @@ class ModelSaver(object):
         ckpt_dict = {
             'ckpt_info': {'epoch': epoch, self.metric_name: metric_val},
             'model_name': model_name,
+            'num_classes': model.module.fc.out_features,
             'model_state': model.to('cpu').state_dict(),
             'optimizer': optimizer.state_dict(),
             'lr_scheduler': lr_scheduler.state_dict()
@@ -90,6 +91,7 @@ class ModelSaver(object):
         # Build model, load parameters
         model_fn = models.__dict__[ckpt_dict['model_name']]
         model = model_fn(pretrained=False)
+        model.fc = nn.Linear(model.fc.in_features, ckpt_dict['num_classes'])
         model = nn.DataParallel(model, gpu_ids)
         model.load_state_dict(ckpt_dict['model_state'])
 
