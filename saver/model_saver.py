@@ -35,12 +35,13 @@ class ModelSaver(object):
                 or (self.maximize_metric and self.best_metric_val < metric_val)
                 or (not self.maximize_metric and self.best_metric_val > metric_val))
 
-    def save(self, epoch, model, optimizer, lr_scheduler, device, metric_val):
+    def save(self, epoch, model, model_name, optimizer, lr_scheduler, device, metric_val):
         """If this epoch corresponds to a save epoch, save model parameters to disk.
 
         Args:
             epoch: Epoch to stamp on the checkpoint.
             model: Model to save.
+            model_name: Name of model used to get model constructor.
             optimizer: Optimizer for model parameters.
             lr_scheduler: Learning rate scheduler for optimizer.
             device: Device where the model/optimizer parameters belong.
@@ -51,7 +52,7 @@ class ModelSaver(object):
 
         ckpt_dict = {
             'ckpt_info': {'epoch': epoch, self.metric_name: metric_val},
-            'model_name': model.module.__class__.__name__,
+            'model_name': model_name,
             'model_state': model.to('cpu').state_dict(),
             'optimizer': optimizer.state_dict(),
             'lr_scheduler': lr_scheduler.state_dict()
