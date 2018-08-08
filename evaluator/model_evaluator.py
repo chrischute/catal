@@ -139,6 +139,14 @@ class ModelEvaluator(object):
             labels = np.concatenate(labels).ravel()
 
             # Update summary dicts
+            try:
+                metrics.update({
+                    phase + '_' + 'AUPRC': sk_metrics.average_precision_score(labels, probs),
+                    phase + '_' + 'AUROC': sk_metrics.roc_auc_score(labels, probs),
+                })
+            except ValueError:
+                pass
+
             metrics.update({
                 phase + '_' + 'accuracy': sk_metrics.accuracy_score(labels, preds),
                 phase + '_' + 'precision': sk_metrics.precision_score(labels, preds),
