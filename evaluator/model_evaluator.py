@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 class ModelEvaluator(object):
     """Class for evaluating a model during training."""
-    def __init__(self, data_loaders, logger, epochs_per_eval=1, max_eval=None, num_visuals=8):
+    def __init__(self, data_loaders, logger, epochs_per_eval=1, max_eval=None, num_visuals=8, prob_threshold=0.5):
         """
         Args:
             data_loaders: List of Torch `DataLoader`s to sample from.
@@ -19,12 +19,14 @@ class ModelEvaluator(object):
             epochs_per_eval: Number of epochs between each evaluation.
             max_eval: Maximum number of examples to evaluate at each evaluation.
             num_visuals: Number of visuals to display from the validation set.
+            prob_threshold: Probability threshold for saying an example is positive.
         """
         self.data_loaders = data_loaders
         self.logger = logger
         self.epochs_per_eval = epochs_per_eval
         self.max_eval = None if max_eval is None or max_eval < 0 else max_eval
         self.num_visuals = num_visuals
+        self.prob_threshold = prob_threshold
         self.loss_fn = nn.CrossEntropyLoss()
 
     def evaluate(self, model, device, epoch=None):
@@ -117,8 +119,7 @@ class ModelEvaluator(object):
         if loss_meter is not None:
             loss_meter.update(loss.item(), logits.size(0))
 
-    @staticmethod
-    def _get_summary_dict(phase, loss_meter=None, probs=None, labels=None):
+    def _get_summary_dict(self, phase, loss_meter=None, probs=None, labels=None):
         """Get summary dictionaries given dictionary of records kept during evaluation.
 
         Args:
@@ -135,7 +136,7 @@ class ModelEvaluator(object):
         if probs is not None:
             # Convert to flat numpy array
             probs = np.concatenate(probs).ravel()
-            preds = (probs > 0.5)
+            preds = (probs > self.prob_threshold)
             labels = np.concatenate(labels).ravel()
 
             # Update summary dicts

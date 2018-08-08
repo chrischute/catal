@@ -17,7 +17,7 @@ def test(args):
                                    shuffle=False, do_augment=False, num_workers=args.num_workers)
     logger = TestLogger(args, len(eval_loader.dataset))
     logger.start_epoch()
-    evaluator = ModelEvaluator([eval_loader], logger, num_visuals=args.num_visuals)
+    evaluator = ModelEvaluator([eval_loader], logger, num_visuals=args.num_visuals, prob_threshold=args.prob_threshold)
     metrics = evaluator.evaluate(model, args.device, logger.epoch)
     logger.end_epoch(metrics)
 

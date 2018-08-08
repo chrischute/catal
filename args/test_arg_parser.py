@@ -12,3 +12,5 @@ class TestArgParser(BaseArgParser):
         self.parser.add_argument('--phase', type=str, default='val', choices=('train', 'val', 'test'),
                                  help='Phase to test on.')
         self.parser.add_argument('--results_dir', type=str, default='results/', help='Save dir for test results.')
+        self.parser.add_argument('--prob_threshold', type=float, default=0.7,
+                                 help='Probability threshold for saying an example is positive.')
