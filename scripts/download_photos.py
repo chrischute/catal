@@ -6,6 +6,7 @@ import re
 import urllib.request
 
 from PIL import Image
+from tqdm import tqdm
 
 IMAGENET_SIZE = 224, 224
 
@@ -36,7 +37,7 @@ def main(args):
         os.makedirs(os.path.join(args.output_dir, dir_name), exist_ok=True)
 
     # Download photos
-    for example in examples:
+    for example in tqdm(examples):
         try:
             subdir_name = 'wb_{}'.format('pos' if example.has_whiteboard else 'neg')
             file_name = '{}.jpg'.format(example.photo_num)
