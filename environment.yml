@@ -1,4 +1,4 @@
-name: catalhoyuk
+name: catal
 channels:
   - pytorch
   - conda-forge
