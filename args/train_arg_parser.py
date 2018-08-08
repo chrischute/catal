@@ -1,3 +1,5 @@
+import util
+
 from .base_arg_parser import BaseArgParser
 
 
@@ -45,3 +47,9 @@ class TrainArgParser(BaseArgParser):
         self.parser.add_argument('--sgd_momentum', type=float, default=0.9, help='SGD momentum (SGD only).')
         self.parser.add_argument('--weight_decay', type=float, default=1e-4,
                                  help='Weight decay (i.e., L2 regularization factor).')
+        self.parser.add_argument('--fine_tune', type=util.str_to_bool, default=False,
+                                 help='If True, fine-tune parameters deeper in the network.')
+        self.parser.add_argument('--fine_tuning_lr', type=float, default=0.,
+                                 help='Initial learning rate for fine-tuning pretrained parameters.')
+        self.parser.add_argument('--fine_tuning_boundary', type=str, default='fc',
+                                 help='First layer to consider a fine-tuning layer, all before it are fine-tuning.')
