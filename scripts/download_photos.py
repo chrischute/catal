@@ -1,33 +1,19 @@
-"""Download a CSV of photos."""
+"""Download photos using metadata from a CSV file."""
 import argparse
 import os
 import pandas as pd
-import re
 import urllib.request
 
+from catal import CatalPhoto
 from PIL import Image
 from tqdm import tqdm
 
 IMAGENET_SIZE = 224, 224
 
 
-class ExamplePhoto(object):
-    re_photo_num = re.compile(r'original=(\d+)', flags=re.IGNORECASE)
-
-    def __init__(self, url, annotation):
-        self.url = str(url)
-        self.photo_num = int(self.re_photo_num.search(url).group(1))
-
-        if annotation.lower().startswith('y'):
-            self.has_whiteboard = True
-        else:
-            self.has_whiteboard = False
-        self.is_difficult = annotation != 'y' and annotation != 'n'
-
-
 def main(args):
     df = pd.read_csv(args.csv_path)
-    examples = [ExamplePhoto(str(row[0]), str(row[1])) for _, row in df.iterrows()]
+    examples = [CatalPhoto(url=str(row[0]), annotation=str(row[1])) for _, row in df.iterrows()]
 
     print('Positives: {}'.format(sum(1 for e in examples if e.has_whiteboard is True)))
     print('Negatives: {}'.format(sum(1 for e in examples if e.has_whiteboard is False)))
