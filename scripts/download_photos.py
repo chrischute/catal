@@ -35,12 +35,12 @@ def main(args):
                 subdir_name = 'wb_{}'.format('pos' if example.has_whiteboard else 'neg')
             else:
                 subdir_name = 'unlabeled'
-            file_name = '{}.jpg'.format(example.photo_num)
+            file_name = '{}.jpg'.format(example.record_id)
             dst_path = os.path.join(args.output_dir, subdir_name, file_name)
             urllib.request.urlretrieve(example.url, dst_path)
             down_sample_image(dst_path, dst_path)
         except Exception as e:
-            print('Error downloading from {}: '.format(example.url, e))
+            print('Error downloading from {}: {}'.format(example.url, e))
 
 
 def down_sample_image(src_path, dst_path):
