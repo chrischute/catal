@@ -1,4 +1,3 @@
-import optim
 import os
 import pandas as pd
 import torch
@@ -8,16 +7,11 @@ from data_loader import WhiteboardLoader
 from saver import ModelSaver
 
 
-def train(args):
+def predict(args):
     model, ckpt_info = ModelSaver.load_model(args.ckpt_path, args.gpu_ids)
     args.start_epoch = ckpt_info['epoch'] + 1
     model = model.to(args.device)
     model.train()
-
-    # Get optimizer and scheduler
-    parameters = optim.get_parameters(model.module, args)
-    optimizer = optim.get_optimizer(parameters, args)
-    lr_scheduler = optim.get_scheduler(optimizer, args)
 
     # Get logger, evaluator, saver
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
@@ -43,4 +37,4 @@ def train(args):
 
 if __name__ == '__main__':
     parser = TestArgParser()
-    train(parser.parse_args())
+    predict(parser.parse_args())
