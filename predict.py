@@ -11,7 +11,7 @@ def predict(args):
     model, ckpt_info = ModelSaver.load_model(args.ckpt_path, args.gpu_ids)
     args.start_epoch = ckpt_info['epoch'] + 1
     model = model.to(args.device)
-    model.train()
+    model.eval()
 
     # Get logger, evaluator, saver
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
