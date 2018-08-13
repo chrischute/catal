@@ -21,12 +21,12 @@ def predict(args):
     all_probs, all_paths = [], []
     for inputs, targets, paths in data_loader:
 
-        with torch.set_grad_enabled(True):
+        with torch.no_grad():
             logits = model.forward(inputs.to(args.device))
             probs = torch.sigmoid(logits)
 
-            all_probs += probs.to('cpu').numpy().tolist()
-            all_paths += list(paths)
+        all_probs += probs.to('cpu').numpy().tolist()
+        all_paths += list(paths)
 
     # Write CSV
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
