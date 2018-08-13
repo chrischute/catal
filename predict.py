@@ -4,6 +4,7 @@ import torch
 
 from args import TestArgParser
 from data_loader import WhiteboardLoader
+from tqdm import tqdm
 from saver import ModelSaver
 
 
@@ -19,14 +20,17 @@ def predict(args):
 
     # Predict outputs
     all_probs, all_paths = [], []
-    for inputs, targets, paths in data_loader:
+    with tqdm(total=len(data_loader.dataset), unit=' ' + args.phase) as progress_bar:
+        for inputs, targets, paths in data_loader:
 
-        with torch.no_grad():
-            logits = model.forward(inputs.to(args.device))
-            probs = torch.sigmoid(logits)
+            with torch.no_grad():
+                logits = model.forward(inputs.to(args.device))
+                probs = torch.sigmoid(logits)
 
-        all_probs += probs.to('cpu').numpy().tolist()
-        all_paths += list(paths)
+            all_probs += probs.to('cpu').numpy().ravel().tolist()
+            all_paths += list(paths)
+
+            progress_bar.update(inputs.size(0))
 
     # Write CSV
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
