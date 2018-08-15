@@ -21,7 +21,7 @@ def predict(args):
 
     # Get logger, evaluator, saver
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
-                                   shuffle=True, do_augment=True, num_workers=args.num_workers)
+                                   shuffle=True, do_augment=False, num_workers=args.num_workers)
 
     # Run a single evaluation
     util.print_err('Running evaluation...')
