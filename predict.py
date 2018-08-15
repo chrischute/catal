@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import pandas as pd
 import torch
@@ -50,6 +51,8 @@ def predict(args):
     # Write CSV
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
     predictions = [int(p > args.prob_threshold) for p in all_probs]
+    print('Mean prediction: {}'.format(np.mean(predictions)))
+
     df = pd.DataFrame([{'record_id': r, 'has_whiteboard': p} for r, p in zip(record_ids, predictions)])
     df.to_csv(os.path.join(args.results_dir, 'outputs.csv'), index=False)
 
