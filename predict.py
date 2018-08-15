@@ -21,7 +21,7 @@ def predict(args):
 
     # Get logger, evaluator, saver
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
-                                   shuffle=True, do_augment=False, num_workers=args.num_workers)
+                                   shuffle=False, do_augment=False, num_workers=args.num_workers)
 
     # Run a single evaluation
     util.print_err('Running evaluation...')
@@ -32,6 +32,7 @@ def predict(args):
     evaluator = ModelEvaluator([eval_loader], logger, num_visuals=args.num_visuals, prob_threshold=args.prob_threshold)
     metrics = evaluator.evaluate(model, args.device, logger.epoch)
     logger.end_epoch(metrics)
+    model.eval()
 
     # Predict outputs
     util.print_err('Generating predictions CSV...')
