@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import torch
+import torch.nn.functional as F
 import util
 
 from args import TestArgParser
@@ -39,7 +40,7 @@ def predict(args):
 
             with torch.no_grad():
                 logits = model.forward(inputs.to(args.device))
-                probs = torch.sigmoid(logits)
+                probs = F.sigmoid(logits)
 
             all_probs += probs.to('cpu').numpy().ravel().tolist()
             all_paths += list(paths)
