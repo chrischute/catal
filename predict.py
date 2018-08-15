@@ -1,9 +1,12 @@
 import os
 import pandas as pd
 import torch
+import util
 
 from args import TestArgParser
 from data_loader import WhiteboardLoader
+from evaluator import ModelEvaluator
+from logger import TestLogger
 from tqdm import tqdm
 from saver import ModelSaver
 
@@ -18,7 +21,18 @@ def predict(args):
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
                                    shuffle=True, do_augment=True, num_workers=args.num_workers)
 
+    # Run a single evaluation
+    util.print_err('Running evaluation...')
+    eval_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
+                                   shuffle=False, do_augment=False, num_workers=args.num_workers)
+    logger = TestLogger(args, len(eval_loader.dataset))
+    logger.start_epoch()
+    evaluator = ModelEvaluator([eval_loader], logger, num_visuals=args.num_visuals, prob_threshold=args.prob_threshold)
+    metrics = evaluator.evaluate(model, args.device, logger.epoch)
+    logger.end_epoch(metrics)
+
     # Predict outputs
+    util.print_err('Generating predictions CSV...')
     all_probs, all_paths = [], []
     with tqdm(total=len(data_loader.dataset), unit=' ' + args.phase) as progress_bar:
         for inputs, targets, paths in data_loader:

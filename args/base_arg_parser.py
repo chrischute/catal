@@ -18,7 +18,7 @@ class BaseArgParser(object):
                                  help='Path to checkpoint to load. If empty, start from scratch.')
         self.parser.add_argument('--data_dir', type=str, default='data/',
                                  help='Path to data directory.')
-        self.parser.add_argument('--gpu_ids', type=str, default='0',
+        self.parser.add_argument('--gpu_ids', type=str, default='0,1',
                                  help='Comma-separated list of GPU IDs. Use -1 for CPU.')
         self.parser.add_argument('--init_method', type=str, default='kaiming', choices=('kaiming', 'normal', 'xavier'),
                                  help='Initialization method to use for network parameters.')
