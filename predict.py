@@ -44,7 +44,9 @@ def predict(args):
                 logits = model.forward(inputs.to(args.device))
                 probs = F.sigmoid(logits)
 
-            all_probs += probs.to('cpu').numpy().ravel().tolist()
+            # Take probability of whiteboard
+            probs = np.array([p[1] for p in probs])
+            all_probs += probs.ravel().tolist()
             all_paths += list(paths)
 
             progress_bar.update(inputs.size(0))
