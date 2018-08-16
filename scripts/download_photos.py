@@ -47,6 +47,7 @@ def main(args):
         img_path = os.path.join(args.output_dir, subdir_name, file_name)
         if os.path.exists(img_path):
             util.print_err('Already downloaded {}'.format(img_path))
+            continue
         url = example.url.replace('original', 'preview')
 
         try:
