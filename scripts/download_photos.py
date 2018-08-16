@@ -19,13 +19,10 @@ def main(args):
         os.makedirs(os.path.join(args.output_dir, 'unlabeled'), exist_ok=True)
     else:
         df = pd.read_csv(args.csv_path)
-        examples = [CatalPhoto(url=str(row[0]), annotation=str(row[1])) for _, row in df.iterrows()]
-
-        print('Positives: {}'.format(sum(1 for e in examples if e.has_whiteboard is True)))
-        print('Negatives: {}'.format(sum(1 for e in examples if e.has_whiteboard is False)))
+        examples = [CatalPhoto(url=str(row['netpublish_URL']), annotation=None) for _, row in df.iterrows()]
 
         # Make directories for holding photos
-        for dir_name in ('wb_pos', 'wb_neg'):
+        for dir_name in ('wb_pos', 'wb_neg', 'unlabeled'):
             os.makedirs(os.path.join(args.output_dir, dir_name), exist_ok=True)
 
     # Download photos
@@ -52,8 +49,8 @@ def down_sample_image(src_path, dst_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Download photos from CSV file of URLs')
 
-    parser.add_argument('--csv_path', default='data/wb_500sample.csv')
-    parser.add_argument('--pkl_path', default='/data/catal/wb_14k.pkl')
+    parser.add_argument('--csv_path', default='data/wb130k.csv')
+    parser.add_argument('--pkl_path', default='data/catal/wb_14k.pkl')
     parser.add_argument('--output_dir', default='/data/catal/wb500')
 
     main(parser.parse_args())
