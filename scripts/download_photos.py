@@ -3,7 +3,9 @@ import argparse
 import os
 import pandas as pd
 import pickle
-import urllib.request
+import requests
+import shutil
+import util
 
 from catal import CatalPhoto
 from PIL import Image
@@ -27,24 +29,29 @@ def main(args):
 
     # Download photos
     for example in tqdm(examples):
+        if example.is_labeled:
+            subdir_name = 'wb_{}'.format('pos' if example.has_whiteboard else 'neg')
+        else:
+            subdir_name = 'unlabeled'
+        file_name = '{}.jpg'.format(example.record_id)
+        img_path = os.path.join(args.output_dir, subdir_name, file_name)
+        if os.path.exists(img_path):
+            util.print_err('Already downloaded {}'.format(img_path))
+        url = example.url.replace('original', 'preview')
+
         try:
-            if example.is_labeled:
-                subdir_name = 'wb_{}'.format('pos' if example.has_whiteboard else 'neg')
-            else:
-                subdir_name = 'unlabeled'
-            file_name = '{}.jpg'.format(example.record_id)
-            dst_path = os.path.join(args.output_dir, subdir_name, file_name)
-            url = example.url.replace('original', 'preview')
-            urllib.request.urlretrieve(url, dst_path)
-            down_sample_image(dst_path, dst_path)
+            response = requests.get(url, stream=True)
+            with open(img_path, 'wb') as out_file:
+                shutil.copyfileobj(response.raw, out_file)
+            del response
+
         except Exception as e:
-            print('Error downloading from {}: {}'.format(example.url, e))
+            print('Error downloading from {}: {}'.format(url, e))
 
-
-def down_sample_image(src_path, dst_path):
-    img = Image.open(src_path, 'r').convert('RGB')
-    img = img.resize(IMAGENET_SIZE)
-    img.save(dst_path)
+        # Down-sample the image
+        img = Image.open(img_path, 'r').convert('RGB')
+        img = img.resize(IMAGENET_SIZE)
+        img.save(img_path)
 
 
 if __name__ == '__main__':
