@@ -10,6 +10,9 @@ import util
 from catal import CatalPhoto
 from PIL import Image
 from tqdm import tqdm
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
 
 IMAGENET_SIZE = 224, 224
 
@@ -27,6 +30,12 @@ def main(args):
         for dir_name in ('wb_pos', 'wb_neg', 'unlabeled'):
             os.makedirs(os.path.join(args.output_dir, dir_name), exist_ok=True)
 
+    session = requests.Session()
+    retry = Retry(connect=3, backoff_factor=0.5)
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
     # Download photos
     examples = examples[20200:]
     for example in tqdm(examples):
@@ -41,7 +50,7 @@ def main(args):
         url = example.url.replace('original', 'preview')
 
         try:
-            response = requests.get(url, stream=True, timeout=10)
+            response = session.get(url, stream=True, timeout=10)
             with open(img_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
