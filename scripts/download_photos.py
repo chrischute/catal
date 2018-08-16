@@ -28,6 +28,7 @@ def main(args):
             os.makedirs(os.path.join(args.output_dir, dir_name), exist_ok=True)
 
     # Download photos
+    examples = examples[20200:]
     for example in tqdm(examples):
         if example.is_labeled:
             subdir_name = 'wb_{}'.format('pos' if example.has_whiteboard else 'neg')
@@ -40,13 +41,14 @@ def main(args):
         url = example.url.replace('original', 'preview')
 
         try:
-            response = requests.get(url, stream=True)
+            response = requests.get(url, stream=True, timeout=10)
             with open(img_path, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
 
         except Exception as e:
             print('Error downloading from {}: {}'.format(url, e))
+            continue
 
         # Down-sample the image
         img = Image.open(img_path, 'r').convert('RGB')
