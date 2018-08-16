@@ -1,9 +1,7 @@
-import numpy as np
 import os
 import pandas as pd
 import torch
 import torch.nn.functional as F
-import util
 
 from args import TestArgParser
 from data_loader import WhiteboardLoader
