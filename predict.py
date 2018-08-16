@@ -18,7 +18,6 @@ def predict(args):
     model.eval()
 
     # Predict outputs
-    util.print_err('Generating predictions CSV...')
     data_loader = WhiteboardLoader(args.data_dir, args.phase, args.batch_size,
                                    shuffle=False, do_augment=False, num_workers=args.num_workers)
     all_probs, all_paths = [], []
@@ -30,8 +29,7 @@ def predict(args):
                 probs = F.sigmoid(logits)
 
             # Take probability of whiteboard
-            probs = np.array([p[1] for p in probs])
-            all_probs += probs.ravel().tolist()
+            all_probs += [p[1] for p in probs]
             all_paths += list(paths)
 
             progress_bar.update(inputs.size(0))
@@ -39,7 +37,6 @@ def predict(args):
     # Write CSV
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
     predictions = [int(p > args.prob_threshold) for p in all_probs]
-    print('Mean prediction: {}'.format(np.mean(predictions)))
 
     df = pd.DataFrame([{'record_id': r, 'has_whiteboard': p} for r, p in zip(record_ids, predictions)])
     df.to_csv(os.path.join(args.results_dir, 'outputs.csv'), index=False)
