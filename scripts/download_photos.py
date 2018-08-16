@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Download photos from CSV file of URLs')
 
     parser.add_argument('--csv_path', default='data/wb130k.csv')
-    parser.add_argument('--pkl_path', default='data/catal/wb_14k.pkl')
-    parser.add_argument('--output_dir', default='/data/catal/wb500')
+    parser.add_argument('--pkl_path', default='')
+    parser.add_argument('--output_dir', default='data/wb130k')
 
     main(parser.parse_args())
