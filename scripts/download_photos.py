@@ -34,7 +34,8 @@ def main(args):
                 subdir_name = 'unlabeled'
             file_name = '{}.jpg'.format(example.record_id)
             dst_path = os.path.join(args.output_dir, subdir_name, file_name)
-            urllib.request.urlretrieve(example.url, dst_path)
+            url = example.url.replace('original', 'preview')
+            urllib.request.urlretrieve(url, dst_path)
             down_sample_image(dst_path, dst_path)
         except Exception as e:
             print('Error downloading from {}: {}'.format(example.url, e))
