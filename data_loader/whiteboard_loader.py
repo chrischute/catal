@@ -4,11 +4,13 @@ import torchvision.transforms as transforms
 
 from constants import CATAL_MEAN, CATAL_STD
 from data_loader.image_folder_with_paths import ImageFolderWithPaths
+from PIL import ImageFile
 
 
 class WhiteboardLoader(data.DataLoader):
     """DataLoader for whiteboard images."""
     def __init__(self, data_dir, phase, batch_size, shuffle, do_augment, num_workers):
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
         self.data_dir = os.path.join(data_dir, phase)
         self.phase = phase
         if do_augment:
