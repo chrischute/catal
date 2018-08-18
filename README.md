@@ -1,6 +1,6 @@
 # Çatalhöyük
 
-![West Mound at Çatalhöyük](/img/west-mound.jpg?raw=true)
+![West Mound at Çatalhöyük](/img/west-mound.jpg?raw=true "West Mound at Çatalhöyük")
 
 ## Project Overview
 
@@ -16,7 +16,7 @@ Our goal is to use computer vision to help enrich the digital resources
 produced by the Çatalhöyük Research Project, in keeping with the project's
 mission to create a living archive.
 
-![Bull's Head](/img/bulls-head.jpg?raw=true)
+![Bull's Head](/img/bulls-head.jpg?raw=true "Bull's Head Uncovered at Çatalhöyük")
 
 ## Subprojects
 
