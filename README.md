@@ -6,7 +6,7 @@
 
 [Çatalhöyük](https://en.wikipedia.org/wiki/%C3%87atalh%C3%B6y%C3%BCk) is an
 UNESCO World Heritage Site located in modern day Turkey. This site has been
-the subject of the Çatalhöyük Research Project, an archaeology project which has
+the subject of the Çatalhöyük Research Project, in which archaeologists have
 collected over 150,000 photographs richly detailing buildings, artifacts,
 and ways of life of this civilization.
 
