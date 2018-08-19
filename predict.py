@@ -36,8 +36,23 @@ def predict(args):
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
     predictions = [int(p > args.prob_threshold) for p in all_probs]
 
-    df = pd.DataFrame([{'record_id': r, 'has_whiteboard': p} for r, p in zip(record_ids, predictions)])
+    df = pd.DataFrame([{'record_id': r, 'has_whiteboard': p, 'url': get_url(r)}
+                       for r, p in zip(record_ids, predictions)])
     df.to_csv(os.path.join(args.results_dir, 'outputs.csv'), index=False)
+
+
+def get_url(record_id, use_preview_url=False):
+    """Convert a record_id to a URL.
+
+    Args:
+        record_id: String record ID to convert to URL
+    """
+    if use_preview_url:
+        url = 'http://catalhoyuk.com/netpub/server.np?original={}&site=catalhoyuk&catalog=catalog'.format(record_id)
+    else:
+        url = 'http://catalhoyuk.com/netpub/server.np?original={}&site=catalhoyuk&catalog=catalog'.format(record_id)
+
+    return url
 
 
 if __name__ == '__main__':
