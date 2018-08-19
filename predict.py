@@ -21,9 +21,12 @@ def predict(args):
     all_probs, all_paths = [], []
     with tqdm(total=len(data_loader.dataset), unit=' ' + args.phase) as progress_bar:
         for inputs, targets, paths in data_loader:
+            bs, n_crops, c, h, w = inputs.size()
+            inputs = inputs.view(-1, c, h, w)  # Fuse batch size and n_crops
 
             with torch.no_grad():
                 logits = model.forward(inputs.to(args.device))
+                logits = logits.view(bs, n_crops, -1).mean(1)  # Average over n_crops
                 probs = F.softmax(logits, -1)
 
             # Take probability of whiteboard

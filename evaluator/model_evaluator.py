@@ -76,7 +76,6 @@ class ModelEvaluator(object):
             num_examples = min(num_examples, self.max_eval)
 
         # Sample from the data loader and record model outputs
-        loss_fn = nn.CrossEntropyLoss()
         num_evaluated = num_visualized = 0
         start_visual = random.randint(0, max(1, num_examples - self.num_visuals))
         with tqdm(total=num_examples, unit=' ' + phase) as progress_bar:
@@ -84,9 +83,13 @@ class ModelEvaluator(object):
                 if num_evaluated >= num_examples:
                     break
 
+                bs, n_crops, c, h, w = inputs.size()
+                inputs = inputs.view(-1, c, h, w)  # Fuse batch size and n_crops
+
                 with torch.no_grad():
                     logits = model.forward(inputs.to(device))
-                    loss = loss_fn(logits, targets.to(device))
+                    logits = logits.view(bs, n_crops, -1).mean(1)  # Average over n_crops
+                    loss = self.loss_fn(logits, targets.to(device))
 
                 self._record_batch(logits, targets, loss, **records)
 
