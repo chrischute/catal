@@ -88,7 +88,7 @@ class ModelEvaluator(object):
 
                 with torch.no_grad():
                     logits = model.forward(inputs.to(device))
-                    logits = logits.view(bs, n_crops, -1).mean(1)  # Average over n_crops
+                    logits = logits.view(bs, n_crops, -1).mean(1)
                     loss = self.loss_fn(logits, targets.to(device))
 
                 self._record_batch(logits, targets, loss, **records)
@@ -113,7 +113,7 @@ class ModelEvaluator(object):
             loss_meter: AverageMeter keeping track of average loss during evaluation.
         """
         with torch.no_grad():
-            batch_probs = F.softmax(logits, dim=-1)
+            batch_probs = F.softmax(logits, dim=-1)  # Average over n_crops
         probs.append(np.array([p[1] for p in batch_probs]))
 
         # Note: `targets` is assumed to hold the keys for these examples
