@@ -96,8 +96,8 @@ class ModelEvaluator(object):
                 if start_visual <= num_evaluated and num_visualized < self.num_visuals and phase != 'train':
                     num_visualized += self.logger.visualize(inputs, logits, targets, paths, phase=phase)
 
-                progress_bar.update(min(inputs.size(0), num_examples - num_evaluated))
-                num_evaluated += inputs.size(0)
+                progress_bar.update(min(targets.size(0), num_examples - num_evaluated))
+                num_evaluated += targets.size(0)
 
         # Map to summary dictionaries
         metrics = self._get_summary_dict(phase, **records)
