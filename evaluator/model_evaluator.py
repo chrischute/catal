@@ -110,7 +110,7 @@ class ModelEvaluator(object):
             loss_meter: AverageMeter keeping track of average loss during evaluation.
         """
         with torch.no_grad():
-            batch_probs = F.sigmoid(logits)
+            batch_probs = F.softmax(logits, dim=-1)
         probs.append(np.array([p[1] for p in batch_probs]))
 
         # Note: `targets` is assumed to hold the keys for these examples

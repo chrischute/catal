@@ -51,7 +51,7 @@ class BaseLogger(object):
     def visualize(self, inputs, logits, targets, paths, phase):
         num_visualized = 0
 
-        probs = F.sigmoid(logits.detach().to('cpu')).numpy()
+        probs = F.softmax(logits.detach().to('cpu'), dim=-1).numpy()
         if targets is not None:
             targets = targets.detach().to('cpu').numpy()
 

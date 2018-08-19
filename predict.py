@@ -24,7 +24,7 @@ def predict(args):
 
             with torch.no_grad():
                 logits = model.forward(inputs.to(args.device))
-                probs = F.sigmoid(logits)
+                probs = F.softmax(logits, -1)
 
             # Take probability of whiteboard
             all_probs += [p[1] for p in probs]
