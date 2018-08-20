@@ -33,7 +33,7 @@ def predict(args):
             all_probs += [p[1] for p in probs]
             all_paths += list(paths)
 
-            progress_bar.update(inputs.size(0))
+            progress_bar.update(targets.size(0))
 
     # Write CSV
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
