@@ -4,6 +4,7 @@ import sklearn.metrics as sk_metrics
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import util
 
 from evaluator.average_meter import AverageMeter
 from tqdm import tqdm
@@ -122,6 +123,7 @@ class ModelEvaluator(object):
         if loss_meter is not None:
             loss_meter.update(loss.item(), logits.size(0))
 
+    @staticmethod
     def _get_summary_dict(self, phase, loss_meter=None, probs=None, labels=None):
         """Get summary dictionaries given dictionary of records kept during evaluation.
 
@@ -139,7 +141,6 @@ class ModelEvaluator(object):
         if probs is not None:
             # Convert to flat numpy array
             probs = np.concatenate(probs).ravel()
-            preds = (probs > self.prob_threshold)
             labels = np.concatenate(labels).ravel()
 
             # Update summary dicts
@@ -151,8 +152,8 @@ class ModelEvaluator(object):
             except ValueError:
                 pass
 
-            best_threshold = self._get_best_threshold(probs, labels, threshold_min=0, threshold_max=100,
-                                                      interval_width=5, metric='accuracy')
+            best_threshold = util.get_best_threshold(probs, labels, threshold_min=0, threshold_max=100,
+                                                     interval_width=5, metric='accuracy')
             preds = np.array(probs) > best_threshold
             metrics.update({
                 phase + '_' + 'best_accuracy': sk_metrics.accuracy_score(labels, preds),
@@ -162,30 +163,3 @@ class ModelEvaluator(object):
             })
 
         return metrics
-
-    @staticmethod
-    def _get_best_threshold(probs, labels, threshold_min=10, threshold_max=100, interval_width=10, metric='kappa'):
-        """Get the probability threshold which gives highest accuracy.
-        Args:
-            probs: NumPy array of probabilities.
-            labels: NumPy array of labels, same shape as probabilities.
-            threshold_min: Minimum value for threshold search range (units of percent).
-            threshold_max: Maximum value for threshold search range (units of percent).
-            interval_width: Width of interval between different probability threshold (units of percent).
-            metric: The metric to determine best threshold. One of 'kappa' or 'accuracy'.
-        """
-        if metric != 'kappa' and metric != 'accuracy':
-            raise ValueError('Expected "kappa" or "accuracy" for metric, got {}'.format(metric))
-        metric_fn = sk_metrics.cohen_kappa_score if metric == 'kappa' else sk_metrics.accuracy_score
-
-        best_metric_value = 0.
-        best_threshold = 0.
-        for percentage_threshold in range(threshold_min, threshold_max, interval_width):
-            threshold = percentage_threshold / 100
-            preds = np.array(probs) > threshold
-            metric_value = metric_fn(labels, preds)
-            if metric_value > best_metric_value:
-                best_metric_value = metric_value
-                best_threshold = threshold
-
-        return best_threshold

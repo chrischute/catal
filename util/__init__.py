@@ -1,3 +1,4 @@
+from util.eval_util import *
 from util.image_util import *
 from util.io_util import *
 from util.torch_util import *

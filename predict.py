@@ -51,6 +51,7 @@ def get_url(record_id, use_preview_url=False):
 
     Args:
         record_id: String record ID to convert to URL
+        use_preview_url: Use the preview URL (for smaller image size) instead of original URL.
     """
     if use_preview_url:
         url = 'http://catalhoyuk.com/netpub/server.np?original={}&site=catalhoyuk&catalog=catalog'.format(record_id)
