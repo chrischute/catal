@@ -39,7 +39,7 @@ def predict(args):
     record_ids = [os.path.basename(p)[:-4] for p in all_paths]  # Convert to record_id
 
     df = pd.DataFrame([{'record_id': r,
-                        'probability': prob,
+                        'probability': '{:.5f}'.format(prob.item()),
                         'has_whiteboard_@{:.2f}'.format(args.prob_threshold): int(prob > args.prob_threshold),
                         'url': get_url(r)}
                        for r, prob in zip(record_ids, all_probs)])
