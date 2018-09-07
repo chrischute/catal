@@ -15,6 +15,7 @@ dependencies:
   - pillow=5.1.0
   - pip=10.0.1
   - python=3.6.5
+  - scikit-learn=0.19.1
   - tensorboard=1.8.0
   - tensorboardx=1.2
   - tensorflow=1.8.0
