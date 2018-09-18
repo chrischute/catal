@@ -34,8 +34,6 @@ def main(args):
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
-    print(len(examples))
-
     # Download photos
     for example in tqdm(examples):
         if example.is_labeled:
